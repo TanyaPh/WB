@@ -1,45 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Order Info</title>
-<style>
-    /* CSS стили для простого оформления */
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 20px;
-    }
-    h1 {
-        color: #333;
-    }
-    .order-details {
-        border: 1px solid #ccc;
-        padding: 10px;
-        margin-top: 10px;
-    }
-</style>
-</head>
-<body>
-    <h1>Order Info</h1>
-    <input type="text" id="orderId" placeholder="Enter Order ID">
-    <button onclick="fetchOrderDetails()">Get Details</button>
-    <div id="orderDetails" class="order-details"></div>
-
-    <script>
-        function fetchOrderDetails() {
-            const orderId = document.getElementById('orderId').value;
-            // Здесь можно использовать AJAX запрос для получения данных по ID заказа
-            // Пример: fetch('/api/order/' + orderId)
-            //     .then(response => response.json())
-            //     .then(data => {
-            //         document.getElementById('orderDetails').innerText = JSON.stringify(data);
-            //     })
-            //     .catch(error => console.error('Error:', error));
-            // Вместо AJAX запроса можно использовать любой другой метод получения данных
-            // и отобразить их в элементе с id "orderDetails"
-        }
-    </script>
-</body>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Order Info</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <h1>Order Info</h1>
+        <input type="text" id="orderId" placeholder="Enter Order ID">
+        <button onclick="fetchOrderInfo()">Get</button>
+        <div id="orderInfo" class="order-info"></div>
+        <script src="script.js"></script>
+    </body>
 </html>
