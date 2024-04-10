@@ -8,7 +8,6 @@ import (
 	"api/pkg/postgres"
 	"api/pkg/server"
 	"context"
-	"fmt"
 
 	"github.com/nats-io/stan.go"
 	"github.com/sirupsen/logrus"
@@ -34,7 +33,7 @@ func main() {
 	handlers := controller.NewRouter(services)
 	srv := server.New("8080", handlers)
 
-	sc, err := stan.Connect("demo-cluster", "demo-subscribe", stan.NatsURL("nats://localhost:1234"))
+	sc, err := stan.Connect("demo-cluster", "demo-subscribe", stan.NatsURL("nats://localhost:4222"))
 	if err != nil {
 		logrus.Fatalf("Unable to connection to STAN: %v\n", err)
 	}
@@ -42,8 +41,9 @@ func main() {
 	defer sc.Close()
 
 	sc.Subscribe("OrderChannel", func(msg *stan.Msg) {
-		fmt.Println(msg.Data)
-		// services.Order.Create(msg)
+		logrus.Info(string(msg.Data))
+		err := services.Order.Create(msg.Data)
+		logrus.Infof("Unable to createorder: %v\n", err)
 	}, stan.DurableName("OrderChannelForever"))
 	logrus.Info("Successfully Subscribe to the OrderChannel")
 

@@ -4,12 +4,10 @@ import (
 	"api/internal/cache"
 	"api/internal/entity"
 	"api/internal/repository"
-
-	"github.com/nats-io/stan.go"
 )
 
 type Order interface {
-	Create(msg *stan.Msg) error
+	Create(msg []byte) error
 	GetById(orderId string) (entity.Order, error)
 }
 

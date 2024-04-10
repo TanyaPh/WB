@@ -8,7 +8,9 @@ import (
 
 func NewRouter(services *service.Service) *gin.Engine {
 	router := gin.New()
-	newOrderRoutes(router.Group("/orders"), services.Order)
+	
+	router.Static("/orders", "./ui")
+	newOrderRoutes(router.Group("/api"), services.Order)
 	
 	return router
 }

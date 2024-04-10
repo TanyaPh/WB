@@ -5,8 +5,6 @@ import (
 	"api/internal/entity"
 	"api/internal/repository"
 	"encoding/json"
-
-	"github.com/nats-io/stan.go"
 )
 
 type OrderService struct {
@@ -21,15 +19,15 @@ func newOrderService(repo repository.Order, cache *cache.Cache) *OrderService {
 	}
 }
 
-func (s *OrderService) Create(msg *stan.Msg) error {
+func (s *OrderService) Create(msg []byte) error {
 	var input entity.Order
-	err := json.Unmarshal(msg.Data, &input)
-	if err != nil {
+	// err := json.Unmarshal(msg, &input)
+	if err := json.Unmarshal(msg, &input); err != nil {
 		return err
 	}
-
-	s.repo.Create(input)
-	if err = s.repo.Create(input); err != nil {
+	
+	// s.repo.Create(input)
+	if err := s.repo.Create(input); err != nil {
 		return err
 	}
 
