@@ -41,9 +41,13 @@ func main() {
 	defer sc.Close()
 
 	sc.Subscribe("OrderChannel", func(msg *stan.Msg) {
-		logrus.Info(string(msg.Data))
-		err := services.Order.Create(msg.Data)
-		logrus.Infof("Unable to createorder: %v\n", err)
+		// logrus.Info(string(msg.Data))
+		// err := services.Order.Create(msg.Data)
+		if err := services.Order.Create(msg.Data); err != nil {
+			logrus.Errorf("Unable to create order: %v\n", err)
+		} else {
+			logrus.Info("Created new order")
+		}
 	}, stan.DurableName("OrderChannelForever"))
 	logrus.Info("Successfully Subscribe to the OrderChannel")
 

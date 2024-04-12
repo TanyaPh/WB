@@ -1,12 +1,11 @@
--- psql -U postgres -f deploy-pd.sql // run
+-- psql -U postgres -f deploy-pg.sql // run
 
--- DROP TABLE IF EXISTS orders;
--- DROP TABLE IF EXISTS delivery;
--- DROP TABLE IF EXISTS payments;
--- DROP TABLE IF EXISTS items_lists;
--- DROP TABLE IF EXISTS items;
--- DROP DATABASE IF EXISTS demo_service;
--- DROP ROLE IF EXISTS gaby;
+DROP TABLE IF EXISTS delivery;
+DROP TABLE IF EXISTS payments;
+DROP TABLE IF EXISTS items;
+DROP TABLE IF EXISTS orders;
+DROP DATABASE IF EXISTS demo_service;
+DROP ROLE IF EXISTS gaby;
 
 CREATE DATABASE demo_service;
 CREATE USER gaby WITH PASSWORD 'forza' SUPERUSER;
@@ -17,14 +16,12 @@ ALTER DATABASE demo_service OWNER TO gaby;
 
 CREATE TABLE orders (
     order_uid VARCHAR(50) PRIMARY KEY,
-    track_number VARCHAR(50) NOT NULL,
+    track_number VARCHAR(50) NOT NULL UNIQUE,
     entry VARCHAR(50) NOT NULL,
-    delivery_id INT NOT NULL, 
-    payment_id INT NOT NULL,
-    items_list_id INT NOT NULL,
+    delivery_id INT NOT NULL,
     locale VARCHAR(50) NOT NULL,
     internal_signature VARCHAR(50),
-    customer_id INT NOT NULL,
+    customer_id VARCHAR(50) NOT NULL,
     delivery_service VARCHAR(50) NOT NULL,
     shardkey VARCHAR(50) NOT NULL,
     sm_id INT NOT NULL,
@@ -44,33 +41,27 @@ CREATE TABLE delivery (
 );
 
 CREATE TABLE payments (
-    transaction VARCHAR(50) PRIMARY KEY,
+    transaction VARCHAR(50) references orders(order_uid),
     request_id VARCHAR(50),
-    currency VARCHAR(50),
-    provider VARCHAR(50),
-    amount INT,
+    currency VARCHAR(50) NOT NULL,
+    provider VARCHAR(50) NOT NULL,
+    amount INT NOT NULL,
     payment_dt INT,
-    bank    VARCHAR(50),
+    bank    VARCHAR(50) NOT NULL,
     delivery_cost INT,
-    goods_total INT,
-    custom_fee INT
+    goods_total INT NOT NULL,
+    custom_fee INT NOT NULL
 );
-
-CREATE TABLE items_lists (
-    id SERIAL PRIMARY KEY,
-    item_id INT
-);
-
 
 CREATE TABLE items(
-    chrt_id SERIAL PRIMARY KEY,
-    track_number INT,
-    price INT,
+    chrt_id INT PRIMARY KEY,
+    track_number VARCHAR(50) references orders(track_number),
+    price INT NOT NULL,
     rid VARCHAR(50),
-    name VARCHAR(50),
-    sale INT,
+    name VARCHAR(50) NOT NULL,
+    sale INT DEFAULT 0,
     size VARCHAR(50),
-    total_price INT,
+    total_price INT NOT NULL,
     nm_id INT,
     brand VARCHAR(50),
     status INT

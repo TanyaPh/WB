@@ -5,6 +5,8 @@ import (
 	"api/internal/entity"
 	"api/internal/repository"
 	"encoding/json"
+
+	"github.com/sirupsen/logrus"
 )
 
 type OrderService struct {
@@ -20,13 +22,15 @@ func newOrderService(repo repository.Order, cache *cache.Cache) *OrderService {
 }
 
 func (s *OrderService) Create(msg []byte) error {
+	
 	var input entity.Order
-	// err := json.Unmarshal(msg, &input)
 	if err := json.Unmarshal(msg, &input); err != nil {
 		return err
 	}
 	
-	// s.repo.Create(input)
+	logrus.Info(input)
+	logrus.Info(input.Items)
+
 	if err := s.repo.Create(input); err != nil {
 		return err
 	}

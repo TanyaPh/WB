@@ -30,7 +30,9 @@ func (h *orderHandler) getOrderByID(c *gin.Context) {
 	if err != nil {
 		logrus.Errorf("No order with id: %s", idStr)
 		c.AbortWithStatusJSON(http.StatusNotFound, fmt.Sprintf("No order with id: %s", idStr))
+		return
 	}
 
+	logrus.Infof("Get order with ID: %v", order.ID)
 	c.JSON(http.StatusOK, order)
 }

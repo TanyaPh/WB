@@ -7,6 +7,7 @@ import (
 	"log"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/sirupsen/logrus"
 	// "github.com/randallmlough/pgxscan"
 	// pgs "github.com/georgysavva/scany/v2/pgxscan"
 )
@@ -133,18 +134,24 @@ func insertItemQuery(it entity.Item) (string, pgx.NamedArgs) {
 }
 
 func (pg *OrderPostgres) GetById(orderId string) (entity.Order, error) {
+
+	logrus.Info("i'm here")
 	ctx := context.Background()
 	var order entity.Order
 	query := `SELECT * FROM orders o JOIN delivery d on o.delivery_id = d.id 
-				JOIN payments p on o.payment_id = p.id 
-				WHERE o.id = $1`
-				//add select items
-	err := pg.db.DB.QueryRow(ctx, query, orderId).Scan(&order)
+				JOIN payments p on o.order_uid = p.transaction 
+				JOIN items i on otrack_number = i.track_number
+				WHERE o.order_uid = $1`
+
+	row, _ := pg.db.DB.Query(ctx, query, orderId)
+	order, err := pgx.CollectOneRow(row, pgx.RowToStructByName[entity.Order])
 	if err != nil {
+		logrus.Info(order)
 		return order, err
 	}
-	
-	return order, err
+
+	logrus.Info(order)
+	return order, nil
 }
 
 func (pg *OrderPostgres) GetAll() ([]entity.Order, error) {
@@ -154,7 +161,7 @@ func (pg *OrderPostgres) GetAll() ([]entity.Order, error) {
 	rows, _ := pg.db.DB.Query(ctx, query)
 	orders, err := pgx.CollectRows(rows, pgx.RowToStructByName[entity.Order])
 	if err != nil {
-		log.Printf("CollectRowsO: %v", err)
+		log.Printf("CollectRows: %v", err)
 		return nil, err
 	}	
 
@@ -173,7 +180,7 @@ func (pg *OrderPostgres) GetAll() ([]entity.Order, error) {
 		if err != nil {
 			return nil, err
 		}
-		orders[i].Payment= payment
+		orders[i].Payment = payment
 
 		query := `SELECT * FROM items WHERE track_number = $1`
 		rows, _ := pg.db.DB.Query(ctx, query, orders[i].TrackNumber)
@@ -185,7 +192,7 @@ func (pg *OrderPostgres) GetAll() ([]entity.Order, error) {
 		orders[i].Items = items
 	}
 
-	log.Printf("Scan: %v", orders[0])
+	// log.Printf("Scan: %v", orders[0])
 
 	return orders, err
 }

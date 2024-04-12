@@ -11,7 +11,7 @@ type Order struct {
 	DeliveryID        int  `json:"-" db:"delivery_id"`
 	Delivery          Delivery `json:"delivery" db:"-"`
 	Payment           Payment `json:"payment"  db:"-"`
-	Items             []Item `json:"-" db:"-"`
+	Items             []Item `json:"items" db:"-"`
 	Locale            string `json:"locale" db:"locale"`
 	InternalSignature string `json:"internal_signature" db:"internal_signature"`
 	CustomerID        string `json:"customer_id" db:"customer_id"`

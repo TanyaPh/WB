@@ -29,7 +29,7 @@ func main() {
 		if err != nil {
 			log.Println("Error publishing message:", err)
 		} else {
-			log.Println("Message published successfully")
+			log.Printf("Data form %v published successfully\n", v)
 		}
 
 		time.Sleep(4 * time.Second)
