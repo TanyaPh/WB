@@ -1,3 +1,12 @@
+-- psql -U postgres -f deploy-pg.sql // run
+
+-- DROP TABLE IF EXISTS delivery;
+-- DROP TABLE IF EXISTS payments;
+-- DROP TABLE IF EXISTS items;
+-- DROP TABLE IF EXISTS orders;
+-- DROP DATABASE IF EXISTS demo_service;
+-- DROP ROLE IF EXISTS gaby;
+
 CREATE DATABASE demo_service;
 CREATE USER gaby WITH PASSWORD 'forza' SUPERUSER;
 GRANT ALL PRIVILEGES ON DATABASE demo_service TO gaby;
